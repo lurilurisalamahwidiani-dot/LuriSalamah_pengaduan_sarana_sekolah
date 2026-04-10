@@ -1,26 +1,24 @@
 <?php
 include "koneksi.php";
 
-// Gunakan nama 'submit' yang simpel agar tidak terjadi error karena karakter titik (.)
 if (isset($_POST['submit'])) {
     $nama       = mysqli_real_escape_string($koneksi, $_POST['Nama']);
-    $tanggal    = date("Y-m-d"); 
+    $tanggal    = mysqli_real_escape_string($koneksi, $_POST['Tanggal']); // ambil dari form
     $kelas      = mysqli_real_escape_string($koneksi, $_POST['Kelas']);
     $pengaduan  = mysqli_real_escape_string($koneksi, $_POST['Pengaduan']);
     $keterangan = mysqli_real_escape_string($koneksi, $_POST['Keterangan']);
     $lokasi     = mysqli_real_escape_string($koneksi, $_POST['Lokasi']);
     
-    // Status default harus 'proses' (huruf kecil) supaya badge oranye muncul di riwayat
     $status     = "proses";
-    $feedback   = " tunggu sedang di proses."; 
+    $feedback   = "tunggu sedang di proses.";
 
-    $query_ins = "INSERT INTO `tabel_input` 
-                  (`Nama`, `Tanggal`, `Kelas`, `Pengaduan`, `Keterangan`, `Lokasi`, `Status`, `Feedback`) 
-                  VALUES 
-                  ('$nama', '$tanggal', '$kelas', '$pengaduan', '$keterangan', '$lokasi', '$status', '$feedback')";
+    $query_ins = "INSERT INTO tabel_input 
+        (Nama, Tanggal, Kelas, Pengaduan, Keterangan, Lokasi, Status, Feedback) 
+        VALUES 
+        ('$nama', '$tanggal', '$kelas', '$pengaduan', '$keterangan', '$lokasi', '$status', '$feedback')";
 
     if (mysqli_query($koneksi, $query_ins)) {
-        echo "<script>alert('Pengaduan berhasil dikirim!'); window.location.href='riwayat.php';</script>";
+        echo "<script>alert('Pengaduan berhasil dikirim!'); window.location.href='simpanpengaduan.php';</script>";
     } else {
         echo "Error: " . mysqli_error($koneksi);
     }
@@ -80,12 +78,15 @@ if (isset($_POST['submit'])) {
 <body>
 
 <div class="section">
-    <a href="dashboard.php" class="btn-back"></a>
+    <a href="dashboard.php" class="btn-back">← Kembali</a>
     <h2>📝 Kirim Laporan</h2>
     
     <form method="POST">
         <label>Nama Lengkap</label>
         <input type="text" name="Nama" placeholder="Masukkan nama Anda" required>
+        
+        <label>Tanggal</label>
+        <input type="date" name="Tanggal" value="<?php echo date('Y-m-d'); ?>" required>
         
         <label>Kelas</label>
         <input type="text" name="Kelas" placeholder="Contoh: XII RPL 1" required>
@@ -102,7 +103,7 @@ if (isset($_POST['submit'])) {
         <button type="submit" name="submit">Kirim Sekarang 🚀</button>
     </form>
     
-    <a href="simpanpengaduan.php" class="link-history">Sudah pernah melapor?<b>Lihat Riwayat ➡️</b></a>
+    <a href="simpanpengaduan.php" class="link-history">Sudah pernah melapor? <b>Lihat Riwayat ➡️</b></a>
 </div>
 
 </body>
